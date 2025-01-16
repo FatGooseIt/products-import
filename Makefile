@@ -1,56 +1,91 @@
-init: docker-network down build up composer-install db-create p-init f-init
-fresh: p-init f-init
-p-init:
-	docker compose run --rm products-import-php-fpm composer p-init
-f-init:
-	docker compose run --rm products-import-php-fpm composer f-init
+init: docker-down-clear docker-build docker-up app-init
+app-init: app-clear-var-cache composer-install app-grant-db app-migrations app-warmup
+validate: cs-check psalm rector-check tests
 
-docker-network:
-	docker network create --driver=bridge --opt com.docker.network.driver.mtu=1440 --subnet=192.168.221.0/26 finturf-local || true
-
-#Docker compose
-build:
-	docker compose build
-down:
-	docker compose down --remove-orphans
-up:
+docker-up:
 	docker compose up -d
 
-#App
-bash:
-	docker compose run --rm products-import-php-fpm bash
-composer-install:
-	docker compose run --rm products-import-php-fpm composer install
-db-create:
+docker-build:
+	docker compose build
+
+docker-down:
+	docker compose down --remove-orphans
+
+docker-down-clear:
+	docker compose down -v --remove-orphans
+
+app-init: app-clear-var-cache composer-install
+
+app-clear-var-cache:
+	docker compose run --rm products-import-php-fpm rm -rf /var/www/app/var/cache
+
+app-grant-db:
+	docker compose exec -T products-import-mysql /usr/bin/mysql -uroot -proot -e "GRANT ALL ON *.* TO user@'%';FLUSH PRIVILEGES;"
+
+app-migrations:
 	docker compose run --rm products-import-php-fpm php bin/console do:database:drop -nq --force --if-exists
 	docker compose run --rm products-import-php-fpm php bin/console do:database:create -nq
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:migrate --no-interaction
-schema-update:
-	docker compose run --rm products-import-php-fpm php bin/console d:schema:update --force
-db-migrate:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:migrate --no-interaction
-db-migrate-prev:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:migrate prev
-db-migrate-status:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:current
-db-migrate-latest:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:latest --no-interaction
-db-diff:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:migrations:diff
-schema-validate:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:schema:validate
-clear-cache:
-	if [ -d app/var/cache/ ]; \
-	then \
-		sudo rm -R app/var/cache/; \
-		sudo chmod -R 777 app/var; \
-	fi;
-load-fixtures:
-	docker compose run --rm products-import-php-fpm php bin/console doctrine:fixtures:load -nq
+	docker compose run --rm products-import-php-fpm php bin/console do:mi:mi -n
 
-#DevTools
-app-cs-fix:
-	docker compose run -e PHP_CS_FIXER_IGNORE_ENV=1 --rm products-import-php-fpm vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.php
-app-stan:
-	docker compose run --rm products-import-php-fpm composer phpstan
-pre-push: app-cs-fix app-stan
+dif:
+	docker compose run --rm products-import-php-fpm php bin/console do:mi:di
+
+mig:
+	docker compose run --rm products-import-php-fpm php bin/console do:mi:mi -n
+
+mig-blanc:
+	docker compose run --rm products-import-php-fpm php bin/console do:mi:generate
+
+app-warmup:
+	docker compose run --rm products-import-php-fpm php bin/console cache:warmup
+
+psalm:
+	docker compose run --rm products-import-php-fpm composer psalm
+
+cs-check:
+	docker compose run --rm products-import-php-fpm composer cs-check
+
+cs-fix:
+	docker compose run --rm products-import-php-fpm composer cs-fix
+
+rector-check:
+	docker compose run --rm products-import-php-fpm composer rector-check
+
+rector-fix:
+	docker compose run --rm products-import-php-fpm composer rector-fix
+	docker compose run --rm products-import-php-fpm composer cs-fix
+	make setown
+
+tests:
+	docker compose run --rm products-import-php-fpm composer phpunit
+
+bash:
+	docker compose exec php bash
+
+composer-install:
+	docker compose run --rm -it products-import-php-fpm composer install
+
+composer-update:
+	docker compose run --rm -it products-import-php-fpm composer update
+
+composer-require:
+	docker compose run --rm -it products-import-php-fpm composer req $(filter-out $@,$(MAKECMDGOALS)) --with-all-dependencies
+
+composer-remove:
+	docker compose run --rm -it products-import-php-fpm composer rem $(filter-out $@,$(MAKECMDGOALS))
+
+composer-check:
+	docker compose run --rm products-import-php-fpm composer outdated
+
+command:
+	docker compose run --rm -it products-import-php-fpm $(filter-out $@,$(MAKECMDGOALS))
+
+console:
+	docker compose run --rm -it products-import-php-fpm php bin/console $(filter-out $@,$(MAKECMDGOALS))
+
+setown:
+	sudo chown -R `id -u`:`id -g` app
+
+command-register:
+	#docker compose run --rm -it products-import-php-fpm php bin/console nutgram:register-commands
+	docker compose run --rm -it products-import-php-fpm php bin/console telegram:register:command

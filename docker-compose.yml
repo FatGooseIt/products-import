@@ -1,10 +1,6 @@
-networks:
-  finturf-local:
-    external: true
-
 services:
   products-import-php-fpm:
-    container_name: products-import-php-fpm
+    container_name: php-fpm
     build:
       context: ./.docker
       dockerfile: ./php-fpm/Dockerfile
@@ -14,22 +10,22 @@ services:
       XDEBUG_CONFIG: "remote_host=192.168.220.1"
       PHP_IDE_CONFIG: "serverName=Docker"
     networks:
-      - finturf-local
+      - products-import-network
   products-import-nginx:
-    container_name: products-import-nginx
-    build:
-      context: ./.docker
-      dockerfile: nginx/Dockerfile
-    volumes:
-      - './app:/var/www/app:rw'
+    image: nginx:latest
+    container_name: nginx
     ports:
-      - 8096:80
+      - "8096:80"
+    volumes:
+      - "$PWD/app:/var/www/app:rw"
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - products-import-php-fpm
     networks:
-      - finturf-local
+      - products-import-network
+    restart: unless-stopped
   products-import-mysql:
-    container_name: products-import-mysql
+    container_name: mysql
     image: mysql:8.4.3
     volumes:
       - "./.data/db/mysql8:/var/lib/mysql"
@@ -39,6 +35,10 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: db
     ports:
-      - 33076:3306
+      - "33076:3306"
     networks:
-      - finturf-local
+      - products-import-network
+
+networks:
+  products-import-network:
+    driver: bridge
