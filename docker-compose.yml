@@ -1,0 +1,44 @@
+networks:
+  finturf-local:
+    external: true
+
+services:
+  products-import-php-fpm:
+    container_name: products-import-php-fpm
+    build:
+      context: ./.docker
+      dockerfile: ./php-fpm/Dockerfile
+    volumes:
+      - './app:/var/www/app:rw'
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.220.1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    networks:
+      - finturf-local
+  products-import-nginx:
+    container_name: products-import-nginx
+    build:
+      context: ./.docker
+      dockerfile: nginx/Dockerfile
+    volumes:
+      - './app:/var/www/app:rw'
+    ports:
+      - 8096:80
+    depends_on:
+      - products-import-php-fpm
+    networks:
+      - finturf-local
+  products-import-mysql:
+    container_name: products-import-mysql
+    image: mysql:8.4.3
+    volumes:
+      - "./.data/db/mysql8:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: db
+    ports:
+      - 33076:3306
+    networks:
+      - finturf-local

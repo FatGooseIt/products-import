@@ -6,15 +6,37 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "symfony/console": "6.4.*",
-        "symfony/dotenv": "6.4.*",
+        "ext-pcre": "*",
+        "ext-session": "*",
+        "ext-simplexml": "*",
+        "ext-tokenizer": "*",
+        "doctrine/annotations": "^1.14",
+        "doctrine/doctrine-bundle": "^2.11",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/orm": "^2.17",
+        "nelmio/api-doc-bundle": "4.23.1",
+        "ramsey/uuid-doctrine": "^2.0",
+        "symfony/asset": "7.0.*",
+        "symfony/console": "7.0.*",
+        "symfony/doctrine-messenger": "7.0.*",
+        "symfony/dotenv": "7.0.*",
         "symfony/flex": "^2",
-        "symfony/framework-bundle": "6.4.*",
-        "symfony/runtime": "6.4.*",
-        "symfony/yaml": "6.4.*"
+        "symfony/framework-bundle": "7.0.*",
+        "symfony/http-client": "7.0.*",
+        "symfony/intl": "7.0.*",
+        "symfony/mailer": "7.0.*",
+        "symfony/messenger": "7.0.*",
+        "symfony/monolog-bundle": "^3.10",
+        "symfony/runtime": "7.0.*",
+        "symfony/security-bundle": "7.0.*",
+        "symfony/sendgrid-mailer": "7.0.*",
+        "symfony/serializer": "7.0.*",
+        "symfony/twig-bundle": "7.0.*",
+        "symfony/validator": "7.0.*",
+        "symfony/yaml": "7.0.*"
     },
     "require-dev": {
     },
@@ -46,8 +68,10 @@
         "symfony/polyfill-php81": "*"
     },
     "scripts": {
-        "auto-scripts": [
-        ],
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
         "post-install-cmd": [
             "@auto-scripts"
         ],
@@ -61,7 +85,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.4.*"
+            "require": "7.0.*"
         }
     }
 }
