@@ -33,7 +33,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: user
       MYSQL_PASSWORD: password
-      MYSQL_DATABASE: db
+      MYSQL_DATABASE: importTest
     ports:
       - "33076:3306"
     networks:
