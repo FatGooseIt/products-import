@@ -1,19 +1,19 @@
 services:
   products-import-php-fpm:
-    container_name: php-fpm
+    container_name: products-import-php-fpm
     build:
       context: ./.docker
       dockerfile: ./php-fpm/Dockerfile
     volumes:
       - './app:/var/www/app:rw'
     environment:
-      XDEBUG_CONFIG: "remote_host=192.168.220.1"
+      XDEBUG_CONFIG: "remote_host=192.168.221.1 remote_enable=1"
       PHP_IDE_CONFIG: "serverName=Docker"
     networks:
       - products-import-network
   products-import-nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: products-import-nginx
     ports:
       - "8096:80"
     volumes:
@@ -24,8 +24,21 @@ services:
     networks:
       - products-import-network
     restart: unless-stopped
+  products-import-php-cli:
+    build:
+      context: ./.docker
+      dockerfile: ./php-cli/Dockerfile
+    container_name: products-import-php-cli
+    volumes:
+      - "$PWD/app:/var/www/app:rw"
+      - "$PWD/.data/composer:/root/.composer/cache"
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.221.1 remote_enable=1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+    networks:
+      - products-import-network
   products-import-mysql:
-    container_name: mysql
+    container_name: products-import-mysql
     image: mysql:8.4.3
     volumes:
       - "./.data/db/mysql8:/var/lib/mysql"
