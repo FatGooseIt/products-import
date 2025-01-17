@@ -13,10 +13,10 @@
         "ext-session": "*",
         "ext-simplexml": "*",
         "ext-tokenizer": "*",
-        "doctrine/annotations": "^1.14",
-        "doctrine/doctrine-bundle": "^2.11",
+        "doctrine/dbal": "^3",
+        "doctrine/doctrine-bundle": "^2.12",
         "doctrine/doctrine-migrations-bundle": "^3.3",
-        "doctrine/orm": "^2.17",
+        "doctrine/orm": "^3.2",
         "nelmio/api-doc-bundle": "4.23.1",
         "ramsey/uuid-doctrine": "^2.0",
         "symfony/asset": "7.0.*",
@@ -39,6 +39,7 @@
         "symfony/yaml": "7.0.*"
     },
     "require-dev": {
+        "symfony/maker-bundle": "^1.62"
     },
     "config": {
         "allow-plugins": {
