@@ -33,7 +33,7 @@ dif:
 mig:
 	docker compose run --rm products-import-php-fpm php bin/console do:mi:mi -n
 
-mig-blanc:
+mig-gen:
 	docker compose run --rm products-import-php-fpm php bin/console do:mi:generate
 
 app-warmup:
@@ -68,7 +68,3 @@ console:
 
 setown:
 	sudo chown -R `id -u`:`id -g` app
-
-command-register:
-	#docker compose run --rm -it products-import-php-fpm php bin/console nutgram:register-commands
-	docker compose run --rm -it products-import-php-fpm php bin/console telegram:register:command
