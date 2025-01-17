@@ -39,23 +39,6 @@ mig-blanc:
 app-warmup:
 	docker compose run --rm products-import-php-fpm php bin/console cache:warmup
 
-psalm:
-	docker compose run --rm products-import-php-fpm composer psalm
-
-cs-check:
-	docker compose run --rm products-import-php-fpm composer cs-check
-
-cs-fix:
-	docker compose run --rm products-import-php-fpm composer cs-fix
-
-rector-check:
-	docker compose run --rm products-import-php-fpm composer rector-check
-
-rector-fix:
-	docker compose run --rm products-import-php-fpm composer rector-fix
-	docker compose run --rm products-import-php-fpm composer cs-fix
-	make setown
-
 tests:
 	docker compose run --rm products-import-php-fpm composer phpunit
 
