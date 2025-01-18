@@ -68,3 +68,6 @@ console:
 
 setown:
 	sudo chown -R `id -u`:`id -g` app
+
+test:
+	docker compose run --rm products-import-php-cli php bin/phpunit
