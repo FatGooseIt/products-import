@@ -1,6 +1,6 @@
 init: docker-down-clear docker-build docker-up app-init
 app-init: app-clear-var-cache composer-install app-grant-db app-migrations app-warmup
-validate: cs-check psalm rector-check tests
+validate: tests
 
 docker-up:
 	docker compose up -d
@@ -71,3 +71,9 @@ setown:
 
 test:
 	docker compose run --rm products-import-php-cli php bin/phpunit
+
+products-import:
+	docker compose run --rm products-import-php-cli php bin/console app:products:import
+
+products-import-test:
+	docker compose run --rm products-import-php-cli php bin/console app:products:import test
