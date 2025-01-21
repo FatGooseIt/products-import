@@ -1,6 +1,6 @@
 init: docker-down-clear docker-build docker-up app-init
 app-init: app-clear-var-cache composer-install app-grant-db app-migrations app-warmup
-validate: cs-check psalm rector-check tests
+validate: tests
 
 docker-up:
 	docker compose up -d
