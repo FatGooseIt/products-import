@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Infrastructure\ImportProduct\Dto;
 
 use App\Infrastructure\Service\ArrayToDtoAdapter\ArrayToDtoAdapterDtoInterface;
+use App\Infrastructure\Service\DataBaseImport\DbImportDto;
 use App\Infrastructure\Service\Validator\ValidationDtoInterface;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Represents a Data Transfer Object (DTO) for a product.
  */
-final readonly class ProductDto implements ArrayToDtoAdapterDtoInterface, ValidationDtoInterface
+final readonly class ProductDto implements ArrayToDtoAdapterDtoInterface, ValidationDtoInterface, DbImportDto
 {
     /**
      * @param string $productCode The unique code of the product.

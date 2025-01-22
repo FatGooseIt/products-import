@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Console;
 
 use App\Infrastructure\ImportProduct\ArrayToDtoAdapter\ArrayToProduct\ProductAdapter;
+use App\Infrastructure\ImportProduct\DataBaseImport\ProductDataBaseImportBuilder;
 use App\Infrastructure\ImportProduct\ReportCreator\ReportCreator;
 use App\Infrastructure\ImportProduct\Validator\ProductValidator;
-use App\Infrastructure\Service\DataBaseImport\Product\ProductDataBaseImport;
+use App\Infrastructure\Service\DataBaseImport\DataBaseImportInterface;
 use App\Infrastructure\Service\FileReader\FileTypes\Csv\CsvReaderFactory;
 use App\Infrastructure\Service\ImportReporter\ReportBuilder;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,7 +34,7 @@ final class ImportProductsCommand extends Command
 
     public function __construct(
         private readonly ProductAdapter $productMapper,
-        private readonly ProductDataBaseImport $dataBaseImport,
+        private readonly DataBaseImportInterface $import,
     ) {
         parent::__construct();
     }
@@ -61,11 +62,14 @@ final class ImportProductsCommand extends Command
                 try {
                     $productDto = $this->productMapper->adapt($item);
 
-                    $validator  = new ProductValidator();
+                    $validator = new ProductValidator();
                     $validator->validate($productDto);
 
                     if ($input->getArgument('mode') !== self::TEST_MODE) {
-                        $this->inserted += $this->dataBaseImport->insert($productDto);;
+                        $this->inserted += $this->import->insert(
+                            importBuilder: new ProductDataBaseImportBuilder(),
+                            importDto: $productDto
+                        );
                     }
                 } catch (\Exception $e) {
                     $this->failedItems[] = json_encode($item);
