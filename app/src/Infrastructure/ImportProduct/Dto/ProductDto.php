@@ -6,6 +6,7 @@ namespace App\Infrastructure\ImportProduct\Dto;
 
 use App\Infrastructure\Service\ArrayToDtoAdapter\ArrayToDtoAdapterDtoInterface;
 use App\Infrastructure\Service\Validator\ValidationDtoInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Represents a Data Transfer Object (DTO) for a product.
@@ -23,8 +24,11 @@ final readonly class ProductDto implements ArrayToDtoAdapterDtoInterface, Valida
      * @param \DateTimeImmutable|null $discontinuedDate The date when the product was discontinued, if applicable.
      */
     public function __construct(
+        #[Length(min: 1, max: 10)]
         public string $productCode,
+        #[Length(max: 50)]
         public string $productName,
+        #[Length(max: 255)]
         public string $productDescription,
         public int $stock,
         public float $costGbp,
