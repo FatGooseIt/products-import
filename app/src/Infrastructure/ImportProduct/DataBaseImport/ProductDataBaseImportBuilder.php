@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\ImportProduct\DataBaseImport;
 
 use App\Domain\TblProductData\Model\TblProductData;
-use App\Infrastructure\ImportProduct\Dto\ProductDto;
 use App\Infrastructure\Service\DataBaseImport\DataBaseImportBuilderInterface;
 use App\Infrastructure\Service\DataBaseImport\DbImportDto;
 
@@ -16,7 +15,8 @@ final readonly class ProductDataBaseImportBuilder implements DataBaseImportBuild
         return TblProductData::TABLE_NAME;
     }
 
-    public function getParams(ProductDto|DbImportDto $importDto): array
+    /** ProductDto $importDto */
+    public function getParams(DbImportDto $importDto): array
     {
         return [
             'strProductName' => $importDto->productName,

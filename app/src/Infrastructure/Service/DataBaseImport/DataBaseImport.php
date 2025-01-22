@@ -6,6 +6,9 @@ namespace App\Infrastructure\Service\DataBaseImport;
 
 use Doctrine\DBAL\Connection;
 
+/**
+ * Handles the insertion of data into a database.
+ */
 final readonly class DataBaseImport implements DataBaseImportInterface
 {
     public function __construct(
@@ -13,6 +16,16 @@ final readonly class DataBaseImport implements DataBaseImportInterface
     ) {
     }
 
+    /**
+     * Inserts data into the database.
+     *
+     * @param DataBaseImportBuilderInterface $importBuilder An implementation of a builder interface.
+     * @param DbImportDto $importDto The DTO containing the data to be inserted.
+     *
+     * @return int The number of rows inserted to the table.
+     *
+     * @throws \Exception If the insert operation fails.
+     */
     public function insert(DataBaseImportBuilderInterface $importBuilder, DbImportDto $importDto): int
     {
         $params = $importBuilder->getParams($importDto);
