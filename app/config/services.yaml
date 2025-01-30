@@ -22,3 +22,13 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Infrastructure\Service\Currency\CurrencyRate\CurrencyRateInterface: '@App\Infrastructure\Service\Currency\CurrencyRate\CurrencyRateProxy'
+
+    App\Infrastructure\Service\Currency\CurrencyRate\CurrencyRateProxy:
+        arguments:
+            $currencyRate: '@App\Infrastructure\Service\Currency\CurrencyRate\CurrencyRateMock'
+
+    App\Infrastructure\Service\Currency\CurrencyConverter\CurrencyConverter:
+        arguments:
+            $currencyRate: '@App\Infrastructure\Service\Currency\CurrencyRate\CurrencyRateProxy'

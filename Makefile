@@ -71,3 +71,9 @@ setown:
 
 test:
 	docker compose run --rm products-import-php-cli php bin/phpunit
+
+products-import:
+	docker compose run --rm products-import-php-cli php bin/console app:products:import
+
+products-import-test:
+	docker compose run --rm products-import-php-cli php bin/console app:products:import test
