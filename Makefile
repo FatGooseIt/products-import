@@ -77,3 +77,6 @@ products-import:
 
 products-import-test:
 	docker compose run --rm products-import-php-cli php bin/console app:products:import test
+
+psalm:
+	docker compose run --rm products-import-php-cli composer psalm
