@@ -25,7 +25,7 @@ class CurrencyConverterTest extends TestCase
         $this->currencyConverter = new CurrencyConverter($this->currencyRateMock);
     }
 
-    public function amountDataProvider(): array
+    public static function amountDataProvider(): array
     {
         return [
             [0.0],
