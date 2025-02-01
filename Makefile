@@ -1,6 +1,6 @@
 init: docker-down-clear docker-build docker-up app-init
 app-init: app-clear-var-cache composer-install app-grant-db app-migrations app-warmup
-validate: tests
+validate: psalm stan tests
 
 docker-up:
 	docker compose up -d
@@ -80,3 +80,6 @@ products-import-test:
 
 psalm:
 	docker compose run --rm products-import-php-cli composer psalm
+
+stan:
+	docker compose run --rm products-import-php-cli composer phpstan
